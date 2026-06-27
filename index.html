@@ -3,316 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Auto Valuation Hub</title>
-    <!-- Tailwind CSS Engine -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        darkBg: '#030712',
-                        darkPanel: '#0b0f19',
-                        neonGold: '#eab308',
-                        neonBorder: '#1f293d'
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Nexus Auto // Price Ledger</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #030712; color: #f3f4f6; }
-        .sharp-input {
-            background-color: #0b0f19;
-            border: 1px solid #1f293d;
-            border-radius: 0px;
+        body {
+            font-family: 'JetBrains+Mono', monospace;
+            background-color: #000000;
+            color: #ffffff;
+        }
+        .neon-border {
+            border: 1px solid #1e293b;
             transition: all 0.2s ease-in-out;
         }
-        .sharp-input:focus {
+        .neon-border:focus-within, .neon-border:hover {
             border-color: #eab308;
-            outline: none;
             box-shadow: 0 0 10px rgba(234, 179, 8, 0.15);
         }
+        input, select, textarea {
+            background-color: #09090b;
+            border: 1px solid #27272a;
+            color: #ffffff;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #eab308;
+        }
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: #000000; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #eab308; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
+<body class="min-h-screen flex flex-col p-4 md:p-6 overflow-x-hidden">
 
-    <!-- Top Navigation Header -->
-    <header class="w-full max-w-5xl mx-auto flex justify-between items-center border-b border-neonBorder pb-4 mb-6">
+    <!-- HEADER -->
+    <header class="w-full max-w-6xl mx-auto flex justify-between items-center pb-4 mb-6 border-b border-zinc-800">
         <div>
-            <h1 class="text-xl font-bold tracking-wider text-white uppercase flex items-center gap-2">
-                <span class="text-neonGold">NEXUS</span> AUTO HUB
-            </h1>
-            <p class="text-xs text-gray-500 tracking-tight mt-0.5">Erbil Showroom Valuation Engine</p>
+            <h1 class="text-xl font-bold tracking-wider text-yellow-500 uppercase">NEXUS // AUTO HUB</h1>
+            <p class="text-xs text-zinc-500">Dealership Price Index & Condition Ledger</p>
         </div>
-        <div class="flex items-center gap-2">
-            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-            <span id="sync-status" class="text-[11px] text-gray-400 uppercase tracking-widest font-medium">Auto-Saved to Profile</span>
+        <div class="flex items-center gap-4">
+            <span class="text-[11px] text-emerald-400 uppercase tracking-widest font-medium animate-pulse">● Auto-Save Active</span>
+            <button onclick="clearAllCars()" class="px-3 py-1 bg-rose-950/30 border border-rose-900 text-rose-400 text-xs rounded hover:bg-rose-900/50">
+                Wipe All
+            </button>
         </div>
     </header>
 
-    <!-- Main Workspace Content Grid -->
-    <main class="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 items-start flex-grow">
+    <!-- MAIN GRID CONTAINER -->
+    <main class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow items-start">
         
-        <!-- Left Data Configuration Panel (7 Columns) -->
-        <section class="md:col-span-7 space-y-6">
+        <!-- LEFT PANEL: REGISTRATION INPUT FORM -->
+        <section class="lg:col-span-5 bg-zinc-950/50 border border-zinc-900 rounded p-5 space-y-4">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-yellow-500 border-b border-zinc-800 pb-2">// Input Vehicle Details</h2>
             
-            <!-- Global Financial Rate Control -->
-            <div class="p-5 bg-darkPanel border border-neonBorder relative">
-                <div class="absolute top-0 left-0 w-1 h-full bg-neonGold"></div>
-                <h2 class="text-xs uppercase font-bold text-gray-400 tracking-widest mb-3">Currency Exchange Parameters</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs text-gray-400 font-medium mb-1.5">Market Exchange Rate ($100 to IQD)</label>
-                        <div class="relative">
-                            <input type="number" id="exchange-rate" value="148000" class="sharp-input w-full px-3 py-2 text-white font-semibold text-sm" placeholder="e.g. 148500">
-                            <span class="absolute right-3 top-2.5 text-xs text-neonGold font-bold">IQD</span>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 font-medium mb-1.5">Base Sticker Cost (USD)</label>
-                        <div class="relative">
-                            <input type="number" id="vehicle-price" value="45000" class="sharp-input w-full px-3 py-2 text-white font-semibold text-sm" placeholder="e.g. 52000">
-                            <span class="absolute right-3 top-2.5 text-xs text-gray-500 font-bold">$</span>
-                        </div>
-                    </div>
+            <!-- Car Brand & Model Name -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Car Brand</label>
+                    <input type="text" id="car-brand" placeholder="e.g. Toyota" class="w-full p-2 text-sm rounded">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Car Name / Model</label>
+                    <input type="text" id="car-model" placeholder="e.g. Camry" class="w-full p-2 text-sm rounded">
                 </div>
             </div>
 
-            <!-- Model Specifications Multi-Tier Selection -->
-            <div class="p-5 bg-darkPanel border border-neonBorder">
-                <h2 class="text-xs uppercase font-bold text-gray-400 tracking-widest mb-3">Model Modification Grade</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs text-gray-400 font-medium mb-1.5">Base Trim Selection</label>
-                        <select id="trim-level" class="sharp-input w-full px-3 py-2 text-white text-sm bg-darkPanel">
-                            <option value="0">Standard Grade / Factory Base</option>
-                            <option value="1500">Premium Trim Tier (+ $1,500)</option>
-                            <option value="3500">Luxury High-Spec Suite (+ $3,500)</option>
-                            <option value="6000">Top-Tier Performance Edition (+ $6,000)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 font-medium mb-1.5">Add-On Asset Packages</label>
-                        <select id="addon-package" class="sharp-input w-full px-3 py-2 text-white text-sm bg-darkPanel">
-                            <option value="0">No Extra Pack</option>
-                            <option value="850">Chrome Accent & Wheel Kit (+ $850)</option>
-                            <option value="1900">Advanced Safety Shield & Tech Pack (+ $1,900)</option>
-                            <option value="3200">Full Signature Exclusive Pack (+ $3,200)</option>
-                        </select>
-                    </div>
+            <!-- Hybrid Option, Engine cylinders & Year -->
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Powertrain</label>
+                    <select id="car-hybrid" class="w-full p-2 text-xs rounded cursor-pointer">
+                        <option value="Not Hybrid">Not Hybrid</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Engine Type</label>
+                    <select id="car-engine" class="w-full p-2 text-xs rounded cursor-pointer">
+                        <option value="V4">V4</option>
+                        <option value="V6">V6</option>
+                        <option value="V8">V8</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Year</label>
+                    <input type="number" id="car-year" placeholder="2025" min="1990" max="2027" class="w-full p-2 text-sm rounded">
                 </div>
             </div>
 
-            <!-- Real-Time Condition Verification Checklist -->
-            <div class="p-5 bg-darkPanel border border-neonBorder">
-                <h2 class="text-xs uppercase font-bold text-gray-400 tracking-widest mb-3">Condition Defect Deductions</h2>
-                <div class="space-y-3">
-                    <label class="flex items-start gap-3 cursor-pointer group">
-                        <input type="checkbox" id="defect-paint" value="1200" class="defect-check mt-1 accent-yellow-500 w-4 h-4 rounded-none bg-darkBg border-neonBorder">
-                        <div>
-                            <span class="text-sm font-medium text-gray-300 group-hover:text-white">Body Repaint / Minor Scratches Detected</span>
-                            <p class="text-xs text-gray-500">- $1,200 off-market trade correction value</p>
-                        </div>
-                    </label>
-                    <label class="flex items-start gap-3 cursor-pointer group">
-                        <input type="checkbox" id="defect-interior" value="850" class="defect-check mt-1 accent-yellow-500 w-4 h-4 rounded-none bg-darkBg border-neonBorder">
-                        <div>
-                            <span class="text-sm font-medium text-gray-300 group-hover:text-white">Upholstery Wear or Console Scuffs</span>
-                            <p class="text-xs text-gray-500">- $850 restoration margin cost allowance</p>
-                        </div>
-                    </label>
-                    <label class="flex items-start gap-3 cursor-pointer group">
-                        <input type="checkbox" id="defect-mechanical" value="2300" class="defect-check mt-1 accent-yellow-500 w-4 h-4 rounded-none bg-darkBg border-neonBorder">
-                        <div>
-                            <span class="text-sm font-medium text-gray-300 group-hover:text-white">Mechanical Tune-up Required</span>
-                            <p class="text-xs text-gray-500">- $2,300 engine/suspension overhaul provision</p>
-                        </div>
-                    </label>
+            <!-- Kilometers driven -->
+            <div>
+                <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Kilometers (KM)</label>
+                <input type="number" id="car-km" placeholder="e.g. 65000" class="w-full p-2 text-sm rounded">
+            </div>
+
+            <!-- Crash Option Logic Block -->
+            <div class="p-3 bg-zinc-900/40 border border-zinc-900 space-y-3 rounded">
+                <div class="flex justify-between items-center">
+                    <label class="text-xs font-bold text-zinc-400 uppercase tracking-wide">Crash / Accident?</label>
+                    <select id="car-crash-toggle" onchange="toggleCrashNotes()" class="px-2 py-1 text-xs cursor-pointer bg-zinc-950 border-zinc-800 rounded">
+                        <option value="No">No Crash</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                </div>
+                <div id="crash-notes-wrapper" class="hidden">
+                    <label class="block text-[10px] text-rose-400 font-bold mb-1 uppercase">What was crashed / damaged?</label>
+                    <textarea id="car-crash-notes" rows="2" placeholder="e.g. Trunk replaced, right door painted..." class="w-full p-2 text-xs resize-none rounded"></textarea>
                 </div>
             </div>
 
-            <!-- Custom Assessment Log Notes -->
-            <div class="p-5 bg-darkPanel border border-neonBorder">
-                <h2 class="text-xs uppercase font-bold text-gray-400 tracking-widest mb-2">Dealership Assessment Dossier</h2>
-                <textarea id="assessment-notes" rows="3" class="sharp-input w-full p-3 text-sm text-gray-300 bg-darkBg" placeholder="Enter custom vehicle details, VIN details, specific damage profiles, or targeted customer trade requests here..."></textarea>
+            <!-- Manual Currency Entry Fields -->
+            <div class="grid grid-cols-2 gap-3 p-3 bg-zinc-900/20 border border-zinc-900 rounded">
+                <div>
+                    <label class="block text-[10px] text-emerald-400 font-bold mb-1 uppercase">Price (USD $)</label>
+                    <input type="number" id="price-usd" placeholder="Manually type USD..." class="w-full p-2 text-sm font-bold text-emerald-400 rounded">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-cyan-400 font-bold mb-1 uppercase">Price (IQD)</label>
+                    <input type="number" id="price-iqd" placeholder="Manually type IQD..." class="w-full p-2 text-sm font-bold text-cyan-400 rounded">
+                </div>
             </div>
+
+            <!-- Save Action Button -->
+            <button onclick="saveVehicleToLedger()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold uppercase tracking-wider text-xs py-3 rounded transition-all cursor-pointer">
+                Save Vehicle into Ledger
+            </button>
         </section>
 
-        <!-- Right Evaluation Outputs Screen (5 Columns) -->
-        <section class="md:col-span-5 space-y-6 lg:sticky lg:top-4">
-            <div class="p-6 bg-darkPanel border border-neonBorder text-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-b from-yellow-500/[0.02] to-transparent pointer-events-none"></div>
-                <h2 class="text-xs uppercase font-bold text-gray-400 tracking-widest mb-4">Calculated Asset Valuation</h2>
-                
-                <!-- Final Evaluated Price (USD) -->
-                <div class="mb-5">
-                    <p class="text-[11px] uppercase tracking-widest text-gray-500 font-medium">Net Value (USD)</p>
-                    <div id="display-usd" class="text-4xl font-bold tracking-tight text-white mt-1">$45,000</div>
-                </div>
-
-                <div class="w-full border-t border-dashed border-neonBorder my-4"></div>
-
-                <!-- Final Evaluated Price (IQD Currency) -->
-                <div class="mb-4">
-                    <p class="text-[11px] uppercase tracking-widest text-neonGold font-semibold">Net Value (Local IQD Exchange)</p>
-                    <div id="display-iqd" class="text-2xl font-bold tracking-normal text-gray-200 mt-1">66,600,000 IQD</div>
-                </div>
-
-                <!-- Live Evaluation Breakdown Invoice Data -->
-                <div class="mt-6 text-left bg-darkBg p-4 border border-neonBorder/60 space-y-2 text-xs">
-                    <div class="flex justify-between"><span class="text-gray-500">Base Car Price:</span><span id="breakdown-base" class="text-gray-300 font-medium">$0</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">Trim Additions:</span><span id="breakdown-trim" class="text-emerald-500 font-medium">+$0</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">Defect Offsets:</span><span id="breakdown-defects" class="text-rose-500 font-medium">-$0</span></div>
-                </div>
+        <!-- RIGHT PANEL: SAVED VEHICLES LIVE LIST FEED -->
+        <section class="lg:col-span-7 flex flex-col space-y-3">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-400">// Saved Database Records</h2>
+                <span id="vehicle-count" class="text-[10px] text-zinc-600 uppercase font-bold">0 Cars</span>
             </div>
 
-            <!-- Manual System Clear Controls -->
-            <button id="clear-btn" class="w-full py-2.5 text-xs uppercase tracking-widest font-semibold border border-rose-900/40 text-rose-400 hover:bg-rose-950/20 active:bg-rose-950/40 transition duration-150">
-                Clear Saved Data Cache
-            </button>
+            <!-- Interactive Live Search Engine Filter -->
+            <input type="text" id="search-bar" oninput="renderLedger()" placeholder="Search your database by brand or model..." class="w-full p-2 text-xs rounded border-zinc-800">
+
+            <!-- Dynamic List Injected Here -->
+            <div id="ledger-list" class="space-y-3 overflow-y-auto max-h-[600px] pr-1">
+                <!-- Data cards rendered automatically via JS -->
+            </div>
         </section>
     </main>
 
-    <!-- Global Application Footer Interface -->
-    <footer class="w-full max-w-5xl mx-auto border-t border-neonBorder mt-8 pt-4 text-center">
-        <p class="text-[10px] uppercase tracking-widest text-gray-600">Nexus Valuation Hub &bull; Protected Offline System Architecture</p>
-    </footer>
-
-    <!-- Core Interactive Tracking Logic Logic Script -->
     <script>
-        // DOM Node Selectors
-        const exchangeRateInput = document.getElementById('exchange-rate');
-        const vehiclePriceInput = document.getElementById('vehicle-price');
-        const trimLevelSelect = document.getElementById('trim-level');
-        const addonPackageSelect = document.getElementById('addon-package');
-        const defectCheckboxes = document.querySelectorAll('.defect-check');
-        const assessmentNotesTextarea = document.getElementById('assessment-notes');
+        // Array pulls dynamically straight from local computer memory storage
+        let carDatabase = JSON.parse(localStorage.getItem('nexus_dealership_db')) || [];
 
-        const displayUsd = document.getElementById('display-usd');
-        const displayIqd = document.getElementById('display-iqd');
-        const syncStatus = document.getElementById('sync-status');
+        window.onload = () => {
+            renderLedger();
+        };
 
-        const breakdownBase = document.getElementById('breakdown-base');
-        const breakdownTrim = document.getElementById('breakdown-trim');
-        const breakdownDefects = document.getElementById('breakdown-defects');
-        const clearBtn = document.getElementById('clear-btn');
-
-        // Main Calculation and UI Synchronization Loop Engine
-        function runEvaluationHub() {
-            // Read UI numeric inputs safely 
-            const baseValue = parseFloat(vehiclePriceInput.value) || 0;
-            const fxRate = parseFloat(exchangeRateInput.value) || 0;
-            const trimMod = parseFloat(trimLevelSelect.value) || 0;
-            const packMod = parseFloat(addonPackageSelect.value) || 0;
-
-            // Iterate and accumulate unchecked/checked damage flags
-            let totalDefectDeduction = 0;
-            defectCheckboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    totalDefectDeduction += parseFloat(checkbox.value) || 0;
-                }
-            });
-
-            // Perform underlying financial calculations
-            const configurationAdditions = trimMod + packMod;
-            const finalUsdCalculation = Math.max(0, (baseValue + configurationAdditions) - totalDefectDeduction);
-            const finalIqdValue = Math.round(finalUsdCalculation * (fxRate / 100));
-
-            // Format numbers nicely into localized layouts
-            displayUsd.textContent = `$${finalUsdCalculation.toLocaleString()}`;
-            displayIqd.textContent = `${finalIqdValue.toLocaleString()} IQD`;
-
-            breakdownBase.textContent = `$${baseValue.toLocaleString()}`;
-            breakdownTrim.textContent = `+$${configurationAdditions.toLocaleString()}`;
-            breakdownDefects.textContent = `-$${totalDefectDeduction.toLocaleString()}`;
-
-            // Trigger silent persistent memory saving sequence
-            autoSaveToCache();
+        function toggleCrashNotes() {
+            const status = document.getElementById('car-crash-toggle').value;
+            const block = document.getElementById('crash-notes-wrapper');
+            if (status === 'Yes') {
+                block.classList.remove('hidden');
+            } else {
+                block.classList.add('hidden');
+                document.getElementById('car-crash-notes').value = '';
+            }
         }
 
-        // Auto-Save Sequence Execution Layer
-        function autoSaveToCache() {
-            const checkedDefects = [];
-            defectCheckboxes.forEach(box => {
-                if (box.checked) checkedDefects.push(box.id);
-            });
+        function saveVehicleToLedger() {
+            const brand = document.getElementById('car-brand').value.trim();
+            const model = document.getElementById('car-model').value.trim();
+            const hybrid = document.getElementById('car-hybrid').value;
+            const engine = document.getElementById('car-engine').value;
+            const year = document.getElementById('car-year').value.trim();
+            const km = document.getElementById('car-km').value.trim();
+            const hasCrash = document.getElementById('car-crash-toggle').value;
+            const crashNotes = document.getElementById('car-crash-notes').value.trim();
+            const usd = parseFloat(document.getElementById('price-usd').value) || 0;
+            const iqd = parseFloat(document.getElementById('price-iqd').value) || 0;
 
-            const currentHubState = {
-                fxRate: exchangeRateInput.value,
-                basePrice: vehiclePriceInput.value,
-                trim: trimLevelSelect.value,
-                addon: addonPackageSelect.value,
-                defects: checkedDefects,
-                notes: assessmentNotesTextarea.value
-            };
-
-            localStorage.setItem('nexus_hub_state', JSON.stringify(currentHubState));
-            
-            // Provide localized premium micro-interaction UI status change
-            syncStatus.textContent = "Saved to Live Storage";
-            syncStatus.classList.replace('text-gray-400', 'text-emerald-400');
-            setTimeout(() => {
-                syncStatus.textContent = "Auto-Saved to Profile";
-                syncStatus.classList.replace('text-emerald-400', 'text-gray-400');
-            }, 800);
-        }
-
-        // Hydration Sequence (Restore saved details if tab resets)
-        function checkAndHydrateState() {
-            const rawCache = localStorage.getItem('nexus_hub_state');
-            if (!rawCache) {
-                runEvaluationHub();
+            if (!brand || !model || !year) {
+                alert("Brand, Model Name, and Year are strictly required fields!");
                 return;
             }
 
-            try {
-                const cachedData = JSON.parse(rawCache);
-                
-                if (cachedData.fxRate !== undefined) exchangeRateInput.value = cachedData.fxRate;
-                if (cachedData.basePrice !== undefined) vehiclePriceInput.value = cachedData.basePrice;
-                if (cachedData.trim !== undefined) trimLevelSelect.value = cachedData.trim;
-                if (cachedData.addon !== undefined) addonPackageSelect.value = cachedData.addon;
-                if (cachedData.notes !== undefined) assessmentNotesTextarea.value = cachedData.notes;
-                
-                if (Array.isArray(cachedData.defects)) {
-                    defectCheckboxes.forEach(box => {
-                        box.checked = cachedData.defects.includes(box.id);
-                    });
-                }
-            } catch (e) {
-                console.error("Storage cache parse failure, baseline tracking loaded", e);
-            }
+            const vehicleObject = {
+                id: Date.now(),
+                brand, model, hybrid, engine, year,
+                km: parseInt(km) || 0,
+                crash: { hasCrash, details: hasCrash === 'Yes' ? crashNotes : 'No Crash' },
+                price: { usd, iqd }
+            };
 
-            runEvaluationHub();
+            // Add straight to top of stack
+            carDatabase.unshift(vehicleObject);
+            
+            // Push update straight into computer harddrive memory automatically
+            localStorage.setItem('nexus_dealership_db', JSON.stringify(carDatabase));
+            
+            // Clean interface up and refresh table view
+            clearInputsForm();
+            renderLedger();
         }
 
-        // Global Interactive Event Listeners Registry
-        const realTimeInputs = [exchangeRateInput, vehiclePriceInput, trimLevelSelect, addonPackageSelect, assessmentNotesTextarea];
-        realTimeInputs.forEach(element => element.addEventListener('input', runEvaluationHub));
-        defectCheckboxes.forEach(box => box.addEventListener('change', runEvaluationHub));
+        function renderLedger() {
+            const container = document.getElementById('ledger-list');
+            const searchVal = document.getElementById('search-bar').value.toLowerCase();
 
-        // System Cache Flush Utility Reset Action
-        clearBtn.addEventListener('click', () => {
-            if (confirm("Are you sure you want to flush all saved pricing formulas and notes? This resets your workspace layout.")) {
-                localStorage.removeItem('nexus_hub_state');
-                exchangeRateInput.value = "148000";
-                vehiclePriceInput.value = "45000";
-                trimLevelSelect.value = "0";
-                addonPackageSelect.value = "0";
-                assessmentNotesTextarea.value = "";
-                defectCheckboxes.forEach(box => box.checked = false);
-                runEvaluationHub();
+            const filteredData = carDatabase.filter(car => 
+                car.brand.toLowerCase().includes(searchVal) || 
+                car.model.toLowerCase().includes(searchVal)
+            );
+
+            document.getElementById('vehicle-count').innerText = `${filteredData.length} Cars Logged`;
+
+            if (filteredData.length === 0) {
+                container.innerHTML = `<div class="text-zinc-700 text-xs text-center py-12 italic">No vehicle index listings found matching input tags.</div>`;
+                return;
             }
-        });
 
-        // Initialize application core on DOM ready layout setup
-        document.addEventListener('DOMContentLoaded', checkAndHydrateState);
+            container.innerHTML = filteredData.map(car => `
+                <div class="bg-zinc-950 border ${car.crash.hasCrash === 'Yes' ? 'border-rose-950' : 'border-zinc-900'} rounded p-4 relative hover:border-yellow-500 transition-all">
+                    <!-- Individual Record Delete Button -->
+                    <button onclick="removeVehicle(${car.id})" class="absolute top-3 right-3 text-zinc-600 hover:text-rose-500 text-xs cursor-pointer">✕</button>
+                    
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="bg-zinc-900 px-1.5 py-0.5 text-[10px] rounded font-bold text-zinc-400">${car.year}</span>
+                                <h3 class="text-sm font-bold text-white">${car.brand} ${car.model}</h3>
+                            </div>
+                            <div class="flex items-center gap-3 text-[10px] text-zinc-500 font-semibold uppercase">
+                                <span class="text-yellow-500">${car.hybrid}</span>
+                                <span>•</span>
+                                <span class="text-zinc-300">${car.engine}</span>
+                                <span>•</span>
+                                <span>${car.km.toLocaleString()} KM</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-bold text-emerald-400">$${car.price.usd.toLocaleString()}</div>
+                            <div class="text-xs font-semibold text-cyan-400 mt-0.5">${car.price.iqd.toLocaleString()} IQD</div>
+                        </div>
+                    </div>
+
+                    <!-- Crash Info Footer Block -->
+                    <div class="mt-3 pt-2 border-t border-zinc-900/60 text-xs">
+                        ${car.crash.hasCrash === 'Yes'
+                            ? `<span class="text-rose-400 font-bold">[⚠️ CRASH REPAIR LOG]:</span> <span class="text-zinc-400 italic">${car.crash.details || 'Unspecified crash details'}</span>`
+                            : `<span class="text-emerald-500 font-bold">[✓ CLEAN VEHICLE TITLE]</span>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function removeVehicle(id) {
+            carDatabase = carDatabase.filter(c => c.id !== id);
+            localStorage.setItem('nexus_dealership_db', JSON.stringify(carDatabase));
+            renderLedger();
+        }
+
+        function clearInputsForm() {
+            document.getElementById('car-brand').value = '';
+            document.getElementById('car-model').value = '';
+            document.getElementById('car-year').value = '';
+            document.getElementById('car-km').value = '';
+            document.getElementById('car-crash-toggle').value = 'No';
+            document.getElementById('car-crash-notes').value = '';
+            document.getElementById('price-usd').value = '';
+            document.getElementById('price-iqd').value = '';
+            toggleCrashNotes();
+        }
+
+        function clearAllCars() {
+            if (confirm("Are you completely sure you want to drop your entire saved cars catalog list database?")) {
+                localStorage.removeItem('nexus_dealership_db');
+                carDatabase = [];
+                renderLedger();
+            }
+        }
     </script>
 </body>
 </html>
