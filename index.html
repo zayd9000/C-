@@ -39,18 +39,29 @@
     </header>
 
     <!-- Entry Mobile Form Box -->
-    <div class="bg(#0b0f19) border border(#1f293d) p-4 rounded-xl space-y-4 mb-6" style="background-color: #0b0f19; border-color: #1f293d;">
+    <div class="bg-darkPanel border border-neonBorder p-4 rounded-xl space-y-4 mb-6" style="background-color: #0b0f19; border-color: #1f293d;">
         
         <!-- Car Brand & Name -->
         <div class="grid grid-cols-2 gap-3">
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Car Brand</label>
-                <input type="text" id="brand" placeholder="e.g. Toyota" class="w-full px-3 py-2 text-sm">
+                <input type="text" id="brand" placeholder="e.g. Toyota" class="w-full px-3 py-2 text-sm" oninput="updateSmartPresets()">
             </div>
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Car Name</label>
-                <input type="text" id="name" placeholder="e.g. Camry" class="w-full px-3 py-2 text-sm">
+                <input type="text" id="name" placeholder="e.g. Camry" class="w-full px-3 py-2 text-sm" oninput="updateSmartPresets()">
             </div>
+        </div>
+
+        <!-- Trim / Option Specification with Smart Presets Dropdown -->
+        <div>
+            <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Trim / Option</label>
+            <div id="trim-select-container" class="hidden mb-2">
+                <select id="trim-dropdown" class="w-full px-3 py-2 text-sm" onchange="syncTrimInput()">
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+            <input type="text" id="trim-text" placeholder="e.g. GXR, GLE, Limited" class="w-full px-3 py-2 text-sm">
         </div>
 
         <!-- Hybrid Switch & Cylinders Selection -->
@@ -60,14 +71,18 @@
                 <select id="hybrid" class="w-full px-3 py-2 text-sm">
                     <option value="Not Hybrid">Not Hybrid</option>
                     <option value="Hybrid">Hybrid</option>
+                    <option value="HEV">HEV</option>
                 </select>
             </div>
             <div>
-                <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Engine</label>
+                <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Engine / Induction</label>
                 <select id="engine" class="w-full px-3 py-2 text-sm">
                     <option value="V4">V4</option>
                     <option value="V6">V6</option>
                     <option value="V8">V8</option>
+                    <option value="Twin Turbo">Twin Turbo</option>
+                    <option value="Turbo">Turbo</option>
+                    <option value="Without Turbo">Without Turbo</option>
                 </select>
             </div>
         </div>
@@ -76,7 +91,7 @@
         <div class="grid grid-cols-2 gap-3">
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Year</label>
-                <input type="number" id="year" placeholder="2025" class="w-full px-3 py-2 text-sm">
+                <input type="number" id="year" placeholder="2026" class="w-full px-3 py-2 text-sm">
             </div>
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Kilometer</label>
@@ -91,7 +106,7 @@
                 <option value="No">No Crash</option>
                 <option value="Yes">Yes</option>
             </select>
-            <input type="text" id="crash-details" placeholder="If yes, what? (e.g. right fender painted)" class="w-full px-3 py-2 text-xs hidden">
+            <input type="text" id="crash-details" placeholder="If yes, what? (e.g. right door painted)" class="w-full px-3 py-2 text-xs hidden">
         </div>
 
         <!-- Manual Type Prices Block -->
@@ -128,6 +143,38 @@
 
         window.onload = () => { renderList(); };
 
+        // Smart dropdown logic tailored specifically to your dealership items
+        function updateSmartPresets() {
+            const brand = document.getElementById('brand').value.toLowerCase().trim();
+            const name = document.getElementById('name').value.toLowerCase().trim();
+            const dropdownContainer = document.getElementById('trim-select-container');
+            const dropdown = document.getElementById('trim-dropdown');
+            const textInput = document.getElementById('trim-text');
+
+            let options = [];
+
+            if (brand === 'toyota' && (name.includes('land') || name.includes('cruiser'))) {
+                options = ['-- Select Trim Preset --', 'GX', 'GXR', 'VX', 'VXR'];
+            } else if (brand === 'toyota' && name.includes('camry')) {
+                options = ['-- Select Trim Preset --', 'E', 'E+', 'LE', 'GLE', 'LIMITED'];
+            }
+
+            if (options.length > 0) {
+                dropdownContainer.classList.remove('hidden');
+                dropdown.innerHTML = options.map(opt => `<option value="${opt === '-- Select Trim Preset --' ? '' : opt}">${opt}</option>`).join('');
+            } else {
+                dropdownContainer.classList.add('hidden');
+            }
+        }
+
+        function syncTrimInput() {
+            const dropdown = document.getElementById('trim-dropdown');
+            const textInput = document.getElementById('trim-text');
+            if (dropdown.value) {
+                textInput.value = dropdown.value;
+            }
+        }
+
         function toggleCrashInput() {
             const toggle = document.getElementById('crash-toggle').value;
             const detailInput = document.getElementById('crash-details');
@@ -142,6 +189,7 @@
         function addCar() {
             const brand = document.getElementById('brand').value.trim();
             const name = document.getElementById('name').value.trim();
+            const trim = document.getElementById('trim-text').value.trim();
             const hybrid = document.getElementById('hybrid').value;
             const engine = document.getElementById('engine').value;
             const year = document.getElementById('year').value;
@@ -155,7 +203,7 @@
 
             const carItem = {
                 id: Date.now(),
-                brand, name, hybrid, engine, year, km,
+                brand, name, trim, hybrid, engine, year, km,
                 crash: crashToggle === 'Yes' ? crashDetails : 'No Crash',
                 usd: usd ? parseFloat(usd).toLocaleString() : '0',
                 iqd: iqd ? parseFloat(iqd).toLocaleString() : '0'
@@ -167,12 +215,15 @@
             // Clear inputs
             document.getElementById('brand').value = '';
             document.getElementById('name').value = '';
+            document.getElementById('trim-text').value = '';
             document.getElementById('year').value = '';
             document.getElementById('km').value = '';
             document.getElementById('crash-toggle').value = 'No';
             document.getElementById('crash-details').value = '';
             document.getElementById('usd').value = '';
             document.getElementById('iqd').value = '';
+            document.getElementById('trim-select-container').classBytes = 'hidden';
+            document.getElementById('trim-select-container').classList.add('hidden');
             toggleCrashInput();
 
             renderList();
@@ -199,8 +250,12 @@
                     
                     <div class="flex justify-between items-start pr-4">
                         <div>
-                            <h4 class="text-sm font-bold text-white">${car.brand} ${car.name} <span class="text-gray-500 font-normal text-xs">(${car.year})</span></h4>
-                            <p class="text-[11px] text-gray-400 mt-0.5 font-medium">${car.hybrid} • ${car.engine} • ${car.km} KM</p>
+                            <h4 class="text-sm font-bold text-white">
+                                ${car.brand} ${car.name} 
+                                ${car.trim ? `<span class="text-yellow-500 font-semibold text-xs ml-1">${car.trim}</span>` : ''}
+                                <span class="text-gray-500 font-normal text-xs ml-1">(${car.year})</span>
+                            </h4>
+                            <p class="text-[11px] text-gray-400 mt-0.5 font-medium">${car.hybrid} • ${car.engine} • ${car.km ? parseFloat(car.km).toLocaleString() : 0} KM</p>
                         </div>
                         <div class="text-right flex flex-col items-end">
                             <span class="text-sm font-bold text-emerald-400">$${car.usd}</span>
