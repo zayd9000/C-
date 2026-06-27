@@ -2,284 +2,217 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Auto // Price Ledger</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Car Price Index</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'JetBrains+Mono', monospace;
-            background-color: #000000;
-            color: #ffffff;
-        }
-        .neon-border {
-            border: 1px solid #1e293b;
-            transition: all 0.2s ease-in-out;
-        }
-        .neon-border:focus-within, .neon-border:hover {
-            border-color: #eab308;
-            box-shadow: 0 0 10px rgba(234, 179, 8, 0.15);
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
         }
         input, select, textarea {
-            background-color: #09090b;
-            border: 1px solid #27272a;
+            background-color: #0b0f19;
+            border: 1px solid #1f293d;
             color: #ffffff;
+            border-radius: 6px;
         }
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #eab308;
         }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #000000; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #eab308; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col p-4 md:p-6 overflow-x-hidden">
+<body class="p-4 max-w-md mx-auto pb-12">
 
-    <!-- HEADER -->
-    <header class="w-full max-w-6xl mx-auto flex justify-between items-center pb-4 mb-6 border-b border-zinc-800">
+    <!-- Mobile App Header -->
+    <header class="flex justify-between items-center mb-6 pt-2">
         <div>
-            <h1 class="text-xl font-bold tracking-wider text-yellow-500 uppercase">NEXUS // AUTO HUB</h1>
-            <p class="text-xs text-zinc-500">Dealership Price Index & Condition Ledger</p>
+            <h1 class="text-lg font-bold tracking-tight text-white"><span class="text-yellow-500">NEXUS</span> AUTO</h1>
+            <p class="text-[11px] text-gray-500 tracking-wide">Personal Dealership Price Log</p>
         </div>
-        <div class="flex items-center gap-4">
-            <span class="text-[11px] text-emerald-400 uppercase tracking-widest font-medium animate-pulse">● Auto-Save Active</span>
-            <button onclick="clearAllCars()" class="px-3 py-1 bg-rose-950/30 border border-rose-900 text-rose-400 text-xs rounded hover:bg-rose-900/50">
-                Wipe All
-            </button>
-        </div>
+        <span class="text-[10px] bg-emerald-950 text-emerald-400 font-semibold px-2 py-0.5 rounded border border-emerald-900">
+            Auto-Save On
+        </span>
     </header>
 
-    <!-- MAIN GRID CONTAINER -->
-    <main class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow items-start">
+    <!-- Entry Mobile Form Box -->
+    <div class="bg(#0b0f19) border border(#1f293d) p-4 rounded-xl space-y-4 mb-6" style="background-color: #0b0f19; border-color: #1f293d;">
         
-        <!-- LEFT PANEL: REGISTRATION INPUT FORM -->
-        <section class="lg:col-span-5 bg-zinc-950/50 border border-zinc-900 rounded p-5 space-y-4">
-            <h2 class="text-xs font-bold uppercase tracking-widest text-yellow-500 border-b border-zinc-800 pb-2">// Input Vehicle Details</h2>
-            
-            <!-- Car Brand & Model Name -->
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Car Brand</label>
-                    <input type="text" id="car-brand" placeholder="e.g. Toyota" class="w-full p-2 text-sm rounded">
-                </div>
-                <div>
-                    <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Car Name / Model</label>
-                    <input type="text" id="car-model" placeholder="e.g. Camry" class="w-full p-2 text-sm rounded">
-                </div>
-            </div>
-
-            <!-- Hybrid Option, Engine cylinders & Year -->
-            <div class="grid grid-cols-3 gap-3">
-                <div>
-                    <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Powertrain</label>
-                    <select id="car-hybrid" class="w-full p-2 text-xs rounded cursor-pointer">
-                        <option value="Not Hybrid">Not Hybrid</option>
-                        <option value="Hybrid">Hybrid</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Engine Type</label>
-                    <select id="car-engine" class="w-full p-2 text-xs rounded cursor-pointer">
-                        <option value="V4">V4</option>
-                        <option value="V6">V6</option>
-                        <option value="V8">V8</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Year</label>
-                    <input type="number" id="car-year" placeholder="2025" min="1990" max="2027" class="w-full p-2 text-sm rounded">
-                </div>
-            </div>
-
-            <!-- Kilometers driven -->
+        <!-- Car Brand & Name -->
+        <div class="grid grid-cols-2 gap-3">
             <div>
-                <label class="block text-[10px] text-zinc-500 font-bold mb-1 uppercase">Kilometers (KM)</label>
-                <input type="number" id="car-km" placeholder="e.g. 65000" class="w-full p-2 text-sm rounded">
+                <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Car Brand</label>
+                <input type="text" id="brand" placeholder="e.g. Toyota" class="w-full px-3 py-2 text-sm">
             </div>
-
-            <!-- Crash Option Logic Block -->
-            <div class="p-3 bg-zinc-900/40 border border-zinc-900 space-y-3 rounded">
-                <div class="flex justify-between items-center">
-                    <label class="text-xs font-bold text-zinc-400 uppercase tracking-wide">Crash / Accident?</label>
-                    <select id="car-crash-toggle" onchange="toggleCrashNotes()" class="px-2 py-1 text-xs cursor-pointer bg-zinc-950 border-zinc-800 rounded">
-                        <option value="No">No Crash</option>
-                        <option value="Yes">Yes</option>
-                    </select>
-                </div>
-                <div id="crash-notes-wrapper" class="hidden">
-                    <label class="block text-[10px] text-rose-400 font-bold mb-1 uppercase">What was crashed / damaged?</label>
-                    <textarea id="car-crash-notes" rows="2" placeholder="e.g. Trunk replaced, right door painted..." class="w-full p-2 text-xs resize-none rounded"></textarea>
-                </div>
+            <div>
+                <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Car Name</label>
+                <input type="text" id="name" placeholder="e.g. Camry" class="w-full px-3 py-2 text-sm">
             </div>
+        </div>
 
-            <!-- Manual Currency Entry Fields -->
-            <div class="grid grid-cols-2 gap-3 p-3 bg-zinc-900/20 border border-zinc-900 rounded">
-                <div>
-                    <label class="block text-[10px] text-emerald-400 font-bold mb-1 uppercase">Price (USD $)</label>
-                    <input type="number" id="price-usd" placeholder="Manually type USD..." class="w-full p-2 text-sm font-bold text-emerald-400 rounded">
-                </div>
-                <div>
-                    <label class="block text-[10px] text-cyan-400 font-bold mb-1 uppercase">Price (IQD)</label>
-                    <input type="number" id="price-iqd" placeholder="Manually type IQD..." class="w-full p-2 text-sm font-bold text-cyan-400 rounded">
-                </div>
+        <!-- Hybrid Switch & Cylinders Selection -->
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Type</label>
+                <select id="hybrid" class="w-full px-3 py-2 text-sm">
+                    <option value="Not Hybrid">Not Hybrid</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
             </div>
-
-            <!-- Save Action Button -->
-            <button onclick="saveVehicleToLedger()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold uppercase tracking-wider text-xs py-3 rounded transition-all cursor-pointer">
-                Save Vehicle into Ledger
-            </button>
-        </section>
-
-        <!-- RIGHT PANEL: SAVED VEHICLES LIVE LIST FEED -->
-        <section class="lg:col-span-7 flex flex-col space-y-3">
-            <div class="flex justify-between items-center">
-                <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-400">// Saved Database Records</h2>
-                <span id="vehicle-count" class="text-[10px] text-zinc-600 uppercase font-bold">0 Cars</span>
+            <div>
+                <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Engine</label>
+                <select id="engine" class="w-full px-3 py-2 text-sm">
+                    <option value="V4">V4</option>
+                    <option value="V6">V6</option>
+                    <option value="V8">V8</option>
+                </select>
             </div>
+        </div>
 
-            <!-- Interactive Live Search Engine Filter -->
-            <input type="text" id="search-bar" oninput="renderLedger()" placeholder="Search your database by brand or model..." class="w-full p-2 text-xs rounded border-zinc-800">
-
-            <!-- Dynamic List Injected Here -->
-            <div id="ledger-list" class="space-y-3 overflow-y-auto max-h-[600px] pr-1">
-                <!-- Data cards rendered automatically via JS -->
+        <!-- Year & Kilometers -->
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Year</label>
+                <input type="number" id="year" placeholder="2025" class="w-full px-3 py-2 text-sm">
             </div>
-        </section>
-    </main>
+            <div>
+                <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Kilometer</label>
+                <input type="number" id="km" placeholder="e.g. 45000" class="w-full px-3 py-2 text-sm">
+            </div>
+        </div>
+
+        <!-- Crash Options Toggle Layout -->
+        <div>
+            <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Crash Option</label>
+            <select id="crash-toggle" onchange="toggleCrashInput()" class="w-full px-3 py-2 text-sm mb-2">
+                <option value="No">No Crash</option>
+                <option value="Yes">Yes</option>
+            </select>
+            <input type="text" id="crash-details" placeholder="If yes, what? (e.g. right fender painted)" class="w-full px-3 py-2 text-xs hidden">
+        </div>
+
+        <!-- Manual Type Prices Block -->
+        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-gray-800">
+            <div>
+                <label class="block text-[10px] uppercase tracking-wider text-emerald-400 mb-1 font-semibold">Price (USD)</label>
+                <input type="number" id="usd" placeholder="$" class="w-full px-3 py-2 text-sm font-bold text-emerald-400">
+            </div>
+            <div>
+                <label class="block text-[10px] uppercase tracking-wider text-yellow-500 mb-1 font-semibold">Price (IQD)</label>
+                <input type="number" id="iqd" placeholder="IQD" class="w-full px-3 py-2 text-sm font-bold text-yellow-500">
+            </div>
+        </div>
+
+        <!-- Add Button -->
+        <button onclick="addCar()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2.5 text-sm rounded-md transition-colors mt-2">
+            Save Entry
+        </button>
+    </div>
+
+    <!-- Live Saved Entries Feed Display -->
+    <div class="space-y-3">
+        <div class="flex justify-between items-center px-1">
+            <h3 class="text-xs uppercase tracking-widest text-gray-400 font-bold">Saved Records</h3>
+            <span id="count" class="text-[10px] text-gray-600 font-semibold">0 Cars</span>
+        </div>
+        <div id="list" class="space-y-2">
+            <!-- Cars show up here -->
+        </div>
+    </div>
 
     <script>
-        // Array pulls dynamically straight from local computer memory storage
-        let carDatabase = JSON.parse(localStorage.getItem('nexus_dealership_db')) || [];
+        let database = JSON.parse(localStorage.getItem('phone_car_records')) || [];
 
-        window.onload = () => {
-            renderLedger();
-        };
+        window.onload = () => { renderList(); };
 
-        function toggleCrashNotes() {
-            const status = document.getElementById('car-crash-toggle').value;
-            const block = document.getElementById('crash-notes-wrapper');
-            if (status === 'Yes') {
-                block.classList.remove('hidden');
+        function toggleCrashInput() {
+            const toggle = document.getElementById('crash-toggle').value;
+            const detailInput = document.getElementById('crash-details');
+            if(toggle === 'Yes') {
+                detailInput.classList.remove('hidden');
             } else {
-                block.classList.add('hidden');
-                document.getElementById('car-crash-notes').value = '';
+                detailInput.classList.add('hidden');
+                detailInput.value = '';
             }
         }
 
-        function saveVehicleToLedger() {
-            const brand = document.getElementById('car-brand').value.trim();
-            const model = document.getElementById('car-model').value.trim();
-            const hybrid = document.getElementById('car-hybrid').value;
-            const engine = document.getElementById('car-engine').value;
-            const year = document.getElementById('car-year').value.trim();
-            const km = document.getElementById('car-km').value.trim();
-            const hasCrash = document.getElementById('car-crash-toggle').value;
-            const crashNotes = document.getElementById('car-crash-notes').value.trim();
-            const usd = parseFloat(document.getElementById('price-usd').value) || 0;
-            const iqd = parseFloat(document.getElementById('price-iqd').value) || 0;
+        function addCar() {
+            const brand = document.getElementById('brand').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const hybrid = document.getElementById('hybrid').value;
+            const engine = document.getElementById('engine').value;
+            const year = document.getElementById('year').value;
+            const km = document.getElementById('km').value;
+            const crashToggle = document.getElementById('crash-toggle').value;
+            const crashDetails = document.getElementById('crash-details').value.trim();
+            const usd = document.getElementById('usd').value;
+            const iqd = document.getElementById('iqd').value;
 
-            if (!brand || !model || !year) {
-                alert("Brand, Model Name, and Year are strictly required fields!");
-                return;
-            }
+            if(!brand || !name) return alert("Please fill out Car Brand and Name!");
 
-            const vehicleObject = {
+            const carItem = {
                 id: Date.now(),
-                brand, model, hybrid, engine, year,
-                km: parseInt(km) || 0,
-                crash: { hasCrash, details: hasCrash === 'Yes' ? crashNotes : 'No Crash' },
-                price: { usd, iqd }
+                brand, name, hybrid, engine, year, km,
+                crash: crashToggle === 'Yes' ? crashDetails : 'No Crash',
+                usd: usd ? parseFloat(usd).toLocaleString() : '0',
+                iqd: iqd ? parseFloat(iqd).toLocaleString() : '0'
             };
 
-            // Add straight to top of stack
-            carDatabase.unshift(vehicleObject);
+            database.unshift(carItem);
+            localStorage.setItem('phone_car_records', JSON.stringify(database));
             
-            // Push update straight into computer harddrive memory automatically
-            localStorage.setItem('nexus_dealership_db', JSON.stringify(carDatabase));
-            
-            // Clean interface up and refresh table view
-            clearInputsForm();
-            renderLedger();
+            // Clear inputs
+            document.getElementById('brand').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('year').value = '';
+            document.getElementById('km').value = '';
+            document.getElementById('crash-toggle').value = 'No';
+            document.getElementById('crash-details').value = '';
+            document.getElementById('usd').value = '';
+            document.getElementById('iqd').value = '';
+            toggleCrashInput();
+
+            renderList();
         }
 
-        function renderLedger() {
-            const container = document.getElementById('ledger-list');
-            const searchVal = document.getElementById('search-bar').value.toLowerCase();
+        function removeCar(id) {
+            database = database.filter(car => car.id !== id);
+            localStorage.setItem('phone_car_records', JSON.stringify(database));
+            renderList();
+        }
 
-            const filteredData = carDatabase.filter(car => 
-                car.brand.toLowerCase().includes(searchVal) || 
-                car.model.toLowerCase().includes(searchVal)
-            );
+        function renderList() {
+            const listEl = document.getElementById('list');
+            document.getElementById('count').innerText = `${database.length} Cars`;
 
-            document.getElementById('vehicle-count').innerText = `${filteredData.length} Cars Logged`;
-
-            if (filteredData.length === 0) {
-                container.innerHTML = `<div class="text-zinc-700 text-xs text-center py-12 italic">No vehicle index listings found matching input tags.</div>`;
+            if(database.length === 0) {
+                listEl.innerHTML = `<p class="text-xs text-center text-gray-600 italic py-6">No prices saved yet.</p>`;
                 return;
             }
 
-            container.innerHTML = filteredData.map(car => `
-                <div class="bg-zinc-950 border ${car.crash.hasCrash === 'Yes' ? 'border-rose-950' : 'border-zinc-900'} rounded p-4 relative hover:border-yellow-500 transition-all">
-                    <!-- Individual Record Delete Button -->
-                    <button onclick="removeVehicle(${car.id})" class="absolute top-3 right-3 text-zinc-600 hover:text-rose-500 text-xs cursor-pointer">✕</button>
+            listEl.innerHTML = database.map(car => `
+                <div class="p-3 rounded-lg border relative ${car.crash !== 'No Crash' ? 'border-rose-950 bg-rose-950/10' : 'border-gray-900 bg-gray-950/40'}">
+                    <button onclick="removeCar(${car.id})" class="absolute top-2 right-3 text-gray-600 text-xs">✕</button>
                     
-                    <div class="flex justify-between items-start">
+                    <div class="flex justify-between items-start pr-4">
                         <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="bg-zinc-900 px-1.5 py-0.5 text-[10px] rounded font-bold text-zinc-400">${car.year}</span>
-                                <h3 class="text-sm font-bold text-white">${car.brand} ${car.model}</h3>
-                            </div>
-                            <div class="flex items-center gap-3 text-[10px] text-zinc-500 font-semibold uppercase">
-                                <span class="text-yellow-500">${car.hybrid}</span>
-                                <span>•</span>
-                                <span class="text-zinc-300">${car.engine}</span>
-                                <span>•</span>
-                                <span>${car.km.toLocaleString()} KM</span>
-                            </div>
+                            <h4 class="text-sm font-bold text-white">${car.brand} ${car.name} <span class="text-gray-500 font-normal text-xs">(${car.year})</span></h4>
+                            <p class="text-[11px] text-gray-400 mt-0.5 font-medium">${car.hybrid} • ${car.engine} • ${car.km} KM</p>
                         </div>
-                        <div class="text-right">
-                            <div class="text-sm font-bold text-emerald-400">$${car.price.usd.toLocaleString()}</div>
-                            <div class="text-xs font-semibold text-cyan-400 mt-0.5">${car.price.iqd.toLocaleString()} IQD</div>
+                        <div class="text-right flex flex-col items-end">
+                            <span class="text-sm font-bold text-emerald-400">$${car.usd}</span>
+                            <span class="text-xs text-yellow-500 font-semibold">${car.iqd} IQD</span>
                         </div>
                     </div>
-
-                    <!-- Crash Info Footer Block -->
-                    <div class="mt-3 pt-2 border-t border-zinc-900/60 text-xs">
-                        ${car.crash.hasCrash === 'Yes'
-                            ? `<span class="text-rose-400 font-bold">[⚠️ CRASH REPAIR LOG]:</span> <span class="text-zinc-400 italic">${car.crash.details || 'Unspecified crash details'}</span>`
-                            : `<span class="text-emerald-500 font-bold">[✓ CLEAN VEHICLE TITLE]</span>`
-                        }
+                    
+                    <div class="mt-2 text-[11px] border-t border-gray-900/60 pt-1.5">
+                        ${car.crash !== 'No Crash' ? `<span class="text-rose-400 font-semibold">⚠️ Crash:</span> <span class="text-gray-400">${car.crash}</span>` : `<span class="text-emerald-500 font-semibold">✓ No Crash</span>`}
                     </div>
                 </div>
             `).join('');
-        }
-
-        function removeVehicle(id) {
-            carDatabase = carDatabase.filter(c => c.id !== id);
-            localStorage.setItem('nexus_dealership_db', JSON.stringify(carDatabase));
-            renderLedger();
-        }
-
-        function clearInputsForm() {
-            document.getElementById('car-brand').value = '';
-            document.getElementById('car-model').value = '';
-            document.getElementById('car-year').value = '';
-            document.getElementById('car-km').value = '';
-            document.getElementById('car-crash-toggle').value = 'No';
-            document.getElementById('car-crash-notes').value = '';
-            document.getElementById('price-usd').value = '';
-            document.getElementById('price-iqd').value = '';
-            toggleCrashNotes();
-        }
-
-        function clearAllCars() {
-            if (confirm("Are you completely sure you want to drop your entire saved cars catalog list database?")) {
-                localStorage.removeItem('nexus_dealership_db');
-                carDatabase = [];
-                renderLedger();
-            }
         }
     </script>
 </body>
